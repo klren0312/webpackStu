@@ -1,11 +1,24 @@
 const path = require('path')
-const Fiber = require('fibers')
+const webpack = require('webpack')
+const htmlWebpackPlugin = require('html-webpack-plugin')
+const cleanWebpackPlugin = require('clean-webpack-plugin')
 
 module.exports = {
-  mode: 'development', // 打包环境
+  mode: 'production', // 打包环境
   entry: {
-    main: './index.js' // 入口
+    main: './src/index.js' // 入口
   },
+  devtool: 'source-map',
+  optimization: {
+    usedExports: true
+  },
+  plugins: [
+    new htmlWebpackPlugin({
+      template: 'src/index.html'
+    }),
+    new cleanWebpackPlugin(),
+    new webpack.HotModuleReplacementPlugin()
+  ],
   output: { // 输出
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist')
@@ -13,33 +26,22 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(png|jpg|gif)$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            name: '[name]_[hash].[ext]'
-          }
-        }
-      },
-      {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
       },
-      {// https://github.com/webpack-contrib/sass-loader#examples
-        test: /\.(sass|scss)$/,
-        use: ['style-loader', {
-          loader: 'css-loader',
-          options: {
-            modules: true
-          }
-        }, {
-          loader: 'sass-loader',
-          options: {
-            implementation: require('sass'),
-            fiber: Fiber
-          }
-        }, 'postcss-loader']
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader'
+        }
       }
     ]
+  },
+  devServer: {
+    contentBase: 'dist',
+    port: 9200,
+    hot: true,
+    hotOnly: true
   }
 }

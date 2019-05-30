@@ -11,3 +11,5 @@ img.className = 'test'
 img.classList.add(style['test-scss'])
 const root = document.getElementById('root')
 root.appendChild(img)
+
+console.log('y a good')

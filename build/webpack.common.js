@@ -2,9 +2,11 @@ const path = require('path')
 const webpack = require('webpack')
 const htmlWebpackPlugin = require('html-webpack-plugin')
 const cleanWebpackPlugin = require('clean-webpack-plugin')
-module.exports = {
+const configs = {
   entry: {
-    main: './src/index.js' // 入口
+    index: './src/index.js', // 入口
+    list: './src/list.js',
+    detail: './src/detail.js'
   },
   module: {
     rules: [
@@ -29,9 +31,6 @@ module.exports = {
     }
   },
   plugins: [
-    new htmlWebpackPlugin({
-      template: 'src/index.html'
-    }),
     new cleanWebpackPlugin(),
     new webpack.ProvidePlugin({
       $: 'jquery',
@@ -44,3 +43,19 @@ module.exports = {
     path: path.resolve(__dirname, '../dist')
   }
 }
+const makeHtmlPlugins = function (config) {
+  const htmlPlugins = []
+  Object.keys(configs.entry).forEach(v => {
+    htmlPlugins.push(
+      new htmlWebpackPlugin({
+        template: 'src/index.html',
+        filename: `${v}.html`,
+        chunks: [v]
+      })
+    )
+  })
+  return htmlPlugins
+}
+
+configs.plugins = configs.plugins.concat(makeHtmlPlugins(configs))
+module.exports = configs

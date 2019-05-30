@@ -1,4 +1,1 @@
-var dom = document.createElement('div');
-dom.innerHTML = _.join(['Dell', 'Lee'], '---');
-document.body.append(dom);
-console.log('in module', this, this===window);
+document.getElementById('root').innerHTML= "this is index page"
